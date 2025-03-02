@@ -1,74 +1,63 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { ThemedText } from "@/components/ThemedText";
+import { useThemeColors } from "@/hooks/useThemeColors";
+import { Text, View, StyleSheet, Image, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Card } from "@/components/Cards";
+import { PokemonCard } from "@/components/pokemon/PokemonCard";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+export default function Index() {
+  const colors = useThemeColors();
+  const pokemons = Array.from({ length: 35 }, (_, k) => ({
+    name: "Pokémon name",
+    id: k + 1,
+  }));
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.tint }]}>
+      <View style={styles.header}>
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require("@/assets/images/pokeball.png")}
+          width={24}
+          height={24}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
+        <ThemedText variant="headline" color="grayLight">
+          Pokédex
         </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+      <Card style={styles.listing}>
+        <FlatList
+          data={pokemons}
+          numColumns={3}
+          columnWrapperStyle={styles.gridGap}
+          contentContainerStyle={[styles.gridGap, styles.list]}
+          renderItem={({ item }) => (
+            <PokemonCard
+              id={item.id}
+              name={item.name}
+              style={{ flex: 1 / 3 }}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </Card>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  container: { flex: 1, padding: 4 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    padding: 12,
+  },
+  listing: {
+    flex: 1,
+  },
+  gridGap: {
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  list: {
+    padding: 12,
   },
 });
